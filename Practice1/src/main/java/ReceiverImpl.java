@@ -43,10 +43,9 @@ public class ReceiverImpl implements Receiver, Runnable {
     private byte[] generateRandomMessage(String in) {
         String[] parts = in.split(" ");
         int cType = Integer.parseInt(parts[0]);
-        String message = parts[1];
+        String message = in.substring(in.indexOf(" ") + 1);
         int pktId = bPktId.incrementAndGet();
         byte bSrc = (byte)0x10;
-        long bPktId = 12;
         int bUserId = 4;
 
         Message encodedPacket = new Message(bSrc, pktId, cType, bUserId, message);

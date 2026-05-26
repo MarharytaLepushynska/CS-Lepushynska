@@ -1,3 +1,3 @@
-public interface Encryptor {
+public interface Encriptor {
     void encrypt(Message message);
 }

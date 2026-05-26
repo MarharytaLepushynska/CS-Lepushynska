@@ -49,4 +49,20 @@ public class Storage {
         productPrice.put(productName, price);
         return "Price: " + price + " was added to product " + productName;
     }
+
+    public void addTestProduct(String name, int count) {
+        productCount.put(name, count);
+    }
+
+    public boolean isCategoryPresent(String category) {
+        return categoryProducts.containsKey(category);
+    }
+
+    public boolean isProductPresentInCategory(String category, String product) {
+        return categoryProducts.get(category).contains(product);
+    }
+
+    public boolean isPricePresentInProduct(String product, double price) {
+        return productPrice.containsKey(product) && productPrice.get(product) >= price;
+    }
 }

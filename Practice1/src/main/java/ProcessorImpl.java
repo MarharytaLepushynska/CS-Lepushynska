@@ -28,8 +28,8 @@ public class ProcessorImpl implements Processor, Runnable {
             case 3 -> {
                 String[] partsI = message.getMessage().split(" ");
                 String nameI = partsI[0].toLowerCase();
-                int priceI = Integer.parseInt(partsI[1]);
-                yield storage.increaseProductCount(nameI, priceI);
+                int countI = Integer.parseInt(partsI[1]);
+                yield storage.increaseProductCount(nameI, countI);
             }
             case 4 -> {
                 String category = message.getMessage().trim().toLowerCase();
