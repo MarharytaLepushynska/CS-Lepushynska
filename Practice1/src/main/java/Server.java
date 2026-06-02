@@ -23,11 +23,11 @@ public class Server {
     private ExecutorService encriptors;
     private ExecutorService senders;
 
-    private ArrayList<ReceiverImpl> receiversList = new ArrayList<>();
+    private ArrayList<Receiver> receiversList = new ArrayList<>();
     private ArrayList<DecriptorImpl> decriptorsList = new ArrayList<>();
     private ArrayList<ProcessorImpl> processorsList  = new ArrayList<>();
     private ArrayList<EncriptorImpl> encriptorsList  = new ArrayList<>();
-    private ArrayList<SenderImpl> sendersList  = new ArrayList<>();
+    private ArrayList<Sender> sendersList  = new ArrayList<>();
 
     Storage storage;
 
@@ -82,7 +82,7 @@ public class Server {
     }
 
     public void stop() {
-        receiversList.forEach(ReceiverImpl::stop);
+        receiversList.forEach(Receiver::stop);
         receivers.shutdown();
 
         decriptorsList.forEach(DecriptorImpl::stop);
@@ -94,7 +94,7 @@ public class Server {
         encriptorsList.forEach(EncriptorImpl::stop);
         encriptors.shutdown();
 
-        sendersList.forEach(SenderImpl::stop);
+        sendersList.forEach(Sender::stop);
         senders.shutdown();
     }
 
