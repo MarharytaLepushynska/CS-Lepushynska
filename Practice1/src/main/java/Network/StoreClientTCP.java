@@ -1,3 +1,8 @@
+package Network;
+
+import Tools.Encoder;
+import Tools.Message;
+
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;

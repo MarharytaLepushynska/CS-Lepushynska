@@ -1,3 +1,5 @@
+package Interfaces;
+
 public interface Decriptor {
     void decrypt(byte[] message);
 

@@ -1,3 +1,5 @@
+package Network;
+
 import java.net.InetAddress;
 
 public class InfoClient {

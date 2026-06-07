@@ -1,3 +1,6 @@
+import Tools.Decoder;
+import Tools.Encoder;
+import Tools.Message;
 import org.apache.commons.codec.binary.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

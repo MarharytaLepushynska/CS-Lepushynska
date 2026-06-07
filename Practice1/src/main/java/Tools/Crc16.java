@@ -1,3 +1,5 @@
+package Tools;
+
 public class Crc16 {
 
     private static final int[] TABLE = {

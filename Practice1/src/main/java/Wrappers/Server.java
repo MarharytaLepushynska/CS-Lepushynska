@@ -1,3 +1,11 @@
+package Wrappers;
+
+import Implementations.*;
+import Interfaces.Receiver;
+import Interfaces.Sender;
+import Tools.Message;
+import Tools.Storage;
+
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;

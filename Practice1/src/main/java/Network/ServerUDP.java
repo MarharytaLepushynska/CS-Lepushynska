@@ -1,3 +1,9 @@
+package Network;
+
+import Tools.Message;
+import Tools.Storage;
+import Wrappers.StoreServer;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
