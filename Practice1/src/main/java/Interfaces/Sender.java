@@ -1,3 +1,5 @@
+package Interfaces;
+
 import java.net.InetAddress;
 
 public interface Sender extends Runnable {

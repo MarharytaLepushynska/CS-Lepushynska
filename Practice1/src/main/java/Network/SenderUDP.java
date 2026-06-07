@@ -1,10 +1,13 @@
+package Network;
+
+import Interfaces.Sender;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
 
 public class SenderUDP implements Sender {
     private final ArrayBlockingQueue<byte[]> in;

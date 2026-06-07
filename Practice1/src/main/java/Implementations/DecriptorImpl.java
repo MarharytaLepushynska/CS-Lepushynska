@@ -1,3 +1,9 @@
+package Implementations;
+
+import Interfaces.Decriptor;
+import Tools.Decoder;
+import Tools.Message;
+
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class DecriptorImpl implements Decriptor, Runnable {
@@ -6,7 +12,7 @@ public class DecriptorImpl implements Decriptor, Runnable {
     private volatile boolean stopped = false;
     private Decoder decoder;
 
-    DecriptorImpl(ArrayBlockingQueue<byte[]> queueRec, ArrayBlockingQueue<Message> queueProc) {
+    public DecriptorImpl(ArrayBlockingQueue<byte[]> queueRec, ArrayBlockingQueue<Message> queueProc) {
         this.queueRec = queueRec;
         this.queueProc = queueProc;
         decoder = new Decoder();

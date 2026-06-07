@@ -1,3 +1,9 @@
+package Implementations;
+
+import Interfaces.Encriptor;
+import Tools.Encoder;
+import Tools.Message;
+
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class EncriptorImpl implements Encriptor, Runnable {
@@ -6,7 +12,7 @@ public class EncriptorImpl implements Encriptor, Runnable {
     private volatile boolean stopped = false;
     private Encoder encoder;
 
-    EncriptorImpl(ArrayBlockingQueue<Message> queueProc, ArrayBlockingQueue<byte[]> queueSend) {
+    public EncriptorImpl(ArrayBlockingQueue<Message> queueProc, ArrayBlockingQueue<byte[]> queueSend) {
         this.queueProc = queueProc;
         this.queueSend = queueSend;
         encoder = new Encoder();

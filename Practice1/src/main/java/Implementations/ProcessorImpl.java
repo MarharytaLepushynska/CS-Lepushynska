@@ -1,3 +1,9 @@
+package Implementations;
+
+import Interfaces.Processor;
+import Tools.Message;
+import Tools.Storage;
+
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class ProcessorImpl implements Processor, Runnable {

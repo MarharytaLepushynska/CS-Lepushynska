@@ -1,3 +1,8 @@
+package Network;
+
+import Tools.Encoder;
+import Tools.Message;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;

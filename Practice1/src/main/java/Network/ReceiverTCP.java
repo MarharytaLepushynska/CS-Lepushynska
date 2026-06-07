@@ -1,3 +1,7 @@
+package Network;
+
+import Interfaces.Receiver;
+
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
