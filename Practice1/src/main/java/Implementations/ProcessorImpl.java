@@ -1,5 +1,6 @@
 package Implementations;
 
+import Db.StorageDb;
 import Interfaces.Processor;
 import Tools.Message;
 import Tools.Storage;
@@ -11,11 +12,13 @@ public class ProcessorImpl implements Processor, Runnable {
     private ArrayBlockingQueue<Message> queueEncr;
     private Storage storage;
     private volatile boolean stopped = false;
+    private StorageDb storageDb;
 
     public ProcessorImpl(ArrayBlockingQueue<Message> queueDecr, ArrayBlockingQueue<Message> queueEncr, Storage storage) {
         this.queueDecr = queueDecr;
         this.queueEncr = queueEncr;
         this.storage = storage;
+        storageDb = new StorageDb("jdbc:mysql://localhost:3306/store_db", "root", "root");
     }
 
     @Override

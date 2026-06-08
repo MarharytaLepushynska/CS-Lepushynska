@@ -1,7 +1,8 @@
 package Network;
 
+import Db.StorageService;
+import Implementations.ProcessorDb;
 import Tools.Message;
-import Tools.Storage;
 import Wrappers.StoreServer;
 
 import java.net.DatagramPacket;
@@ -13,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerUDP {
     private final ConcurrentHashMap<Byte, InfoClient> clients = new ConcurrentHashMap<>();
-    private final Storage storage = new Storage();
 
     private final ArrayBlockingQueue<DatagramPacket> packets = new ArrayBlockingQueue<>(50);
     private final ArrayBlockingQueue<byte[]> toDecriptor = new ArrayBlockingQueue<>(50);
@@ -24,20 +24,20 @@ public class ServerUDP {
     private final StoreServerUDP serverUDP;
     private final StoreServer storeServer;
 
-    public ServerUDP() throws SocketException {
+    public ServerUDP(int decCount, int encCount) throws SocketException {
         DatagramSocket socket = new DatagramSocket();
 
         serverUDP = new StoreServerUDP(packets);
 
         ReceiverUDP receiver = new ReceiverUDP(packets, toDecriptor, clients, socket);
         SenderUDP sender = new SenderUDP(toSender, clients, socket);
+        StorageService storageService = new StorageService();
+        ProcessorDb processorDb = new ProcessorDb(toProcessor, toEncriptor, storageService);
 
-        storeServer = new StoreServer(storage,
-                toDecriptor, toProcessor, toEncriptor, toSender,
+        storeServer = new StoreServer(toDecriptor, toProcessor, toEncriptor, toSender,
                 List.of(receiver),
                 List.of(sender),
-                1, 1, 1
-        );
+                List.of(processorDb), decCount, encCount);
     }
 
     public void start() {
@@ -48,9 +48,5 @@ public class ServerUDP {
     public void stop() {
         serverUDP.stop();
         storeServer.stop();
-    }
-
-    public Storage getStorage() {
-        return storage;
     }
 }

@@ -19,8 +19,6 @@ public class StoreServer {
     private final ArrayBlockingQueue<Message> toEncriptor;
     private final ArrayBlockingQueue<byte[]> toSender;
 
-    private final Storage storage;
-
     private final List<Receiver> receiversList;
     private final List<Decriptor> decriptorsList;
     private final List<Processor> prosessorsList;
@@ -34,17 +32,15 @@ public class StoreServer {
     private ExecutorService senders;
 
     private int decCount;
-    private int prosCount;
     private int encCount;
 
-    public StoreServer(Storage storage,
-                       ArrayBlockingQueue<byte[]> toDecriptor,
+    public StoreServer(ArrayBlockingQueue<byte[]> toDecriptor,
                        ArrayBlockingQueue<Message> toProcessor,
                         ArrayBlockingQueue<Message> toEncriptor,
                         ArrayBlockingQueue<byte[]> toSender,
                         List<Receiver> receivers,
-                        List<Sender> senders, int decCount, int prosCount, int encCount) {
-        this.storage = storage;
+                        List<Sender> senders,
+                        List<Processor> processors, int decCount, int encCount) {
         this.toDecriptor = toDecriptor;
         this.toProcessor = toProcessor;
         this.toEncriptor = toEncriptor;
@@ -53,23 +49,22 @@ public class StoreServer {
         this.receiversList = receivers;
         this.sendersList = senders;
         decriptorsList = new ArrayList<>();
-        prosessorsList = new ArrayList<>();
+        prosessorsList = processors;
         encriptorsList = new ArrayList<>();
 
         this.receivers = Executors.newCachedThreadPool();
         this.decriptors = Executors.newFixedThreadPool(decCount);
-        this.processors = Executors.newFixedThreadPool(prosCount);
+        this.processors = Executors.newCachedThreadPool();
         this.encriptors = Executors.newFixedThreadPool(encCount);
         this.senders = Executors.newCachedThreadPool();
 
         this.decCount = decCount;
-        this.prosCount = prosCount;
         this.encCount = encCount;
     }
 
     public void start() {
         for(Receiver receiver : receiversList) {
-            receivers.submit((Runnable) receiver);
+            receivers.submit(receiver);
         }
 
         for(int i = 0; i < decCount; i++) {
@@ -78,10 +73,8 @@ public class StoreServer {
             decriptors.submit(decriptor);
         }
 
-        for (int i = 0; i < prosCount; i++) {
-            ProcessorImpl processor = new ProcessorImpl(toProcessor, toEncriptor, storage);
-            prosessorsList.add(processor);
-            processors.submit(processor);
+        for(Processor processor : prosessorsList) {
+            processors.submit((Runnable) processor);
         }
 
         for(int i = 0; i < encCount; i++) {
@@ -91,7 +84,7 @@ public class StoreServer {
         }
 
         for(Sender sender : sendersList) {
-            senders.submit((Runnable) sender);
+            senders.submit(sender);
         }
     }
 

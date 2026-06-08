@@ -8,6 +8,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class StoreServerTCP implements Runnable {
     private final ArrayBlockingQueue<Socket> sockets;
     private volatile boolean stopped = false;
+    private ServerSocket serverSocket;
 
     public StoreServerTCP(ArrayBlockingQueue<Socket> sockets) {
         this.sockets = sockets;
@@ -15,10 +16,17 @@ public class StoreServerTCP implements Runnable {
 
     @Override
     public void run() {
-        try(ServerSocket serverSocket = new ServerSocket(8080)){
+        try {
+            serverSocket = new ServerSocket(8080);
+
             while(!stopped){
-                Socket socket = serverSocket.accept();
-                sockets.put(socket);
+                try {
+                    Socket socket = serverSocket.accept();
+                    sockets.put(socket);
+                } catch (IOException e) {
+                    if(stopped) break;
+                    throw new RuntimeException(e);
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -29,5 +37,13 @@ public class StoreServerTCP implements Runnable {
 
     public void stop() {
         stopped = true;
+
+        try {
+            if(serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
