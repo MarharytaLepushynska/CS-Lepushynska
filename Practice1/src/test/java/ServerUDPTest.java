@@ -1,3 +1,4 @@
+import Db.StorageService;
 import Network.ServerUDP;
 import Network.StoreClientUDP;
 import org.junit.jupiter.api.Test;
@@ -8,10 +9,11 @@ import java.util.concurrent.ArrayBlockingQueue;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ServerUDPTest {
+    private StorageService service = new StorageService();
 
     @Test
     void testClientAddsProducts() throws IOException, InterruptedException {
-        ServerUDP server = new ServerUDP();
+        ServerUDP server = new ServerUDP(1, 1);
         server.start();
         Thread.sleep(1000);
 
@@ -20,12 +22,12 @@ class ServerUDPTest {
         new Thread(new StoreClientUDP(clients)).start();
         Thread.sleep(1000);
 
-        for(int i = 0; i < 10; i++) {
-            clients.put("3 квас 8");
-        }
+
+        clients.put("2 манка 8 5 крупи");
+
 
         Thread.sleep(3000);
-        assertEquals(80, server.getStorage().getProductCount("квас"));
+        assertEquals(8, service.getAmountByName("манка"));
         server.stop();
     }
 }

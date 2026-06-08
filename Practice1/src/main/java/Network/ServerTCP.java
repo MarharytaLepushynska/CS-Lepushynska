@@ -1,5 +1,7 @@
 package Network;
 
+import Db.StorageService;
+import Implementations.ProcessorDb;
 import Tools.Message;
 import Tools.Storage;
 import Wrappers.StoreServer;
@@ -11,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerTCP {
     private final ConcurrentHashMap<Byte, SocketWrapper> clients = new ConcurrentHashMap<>();
-    private final Storage storage  = new Storage();
 
     private final ArrayBlockingQueue<Socket> sockets = new ArrayBlockingQueue<>(50);
     private final ArrayBlockingQueue<byte[]> toDecriptor = new ArrayBlockingQueue<>(50);
@@ -22,17 +23,18 @@ public class ServerTCP {
     private final StoreServerTCP storeServerTCP;
     private final StoreServer storeServer;
 
-    public ServerTCP(int decCount, int prosCount, int encCount) {
+    public ServerTCP(int decCount, int encCount) {
         storeServerTCP = new StoreServerTCP(sockets);
 
         ReceiverTCP receiver = new ReceiverTCP(sockets, toDecriptor, clients);
         SenderTCP sender = new SenderTCP(toSender, clients);
+        StorageService storageService = new StorageService();
+        ProcessorDb processorDb = new ProcessorDb(toProcessor, toEncriptor, storageService);
 
-        storeServer = new StoreServer(storage,
-                toDecriptor, toProcessor, toEncriptor, toSender,
+        storeServer = new StoreServer(toDecriptor, toProcessor, toEncriptor, toSender,
                 List.of(receiver),
                 List.of(sender),
-                decCount, prosCount, encCount);
+                List.of(processorDb), decCount, encCount);
     }
 
     public void start() {
@@ -45,7 +47,7 @@ public class ServerTCP {
         storeServer.stop();
     }
 
-    public Storage getStorage() {
-        return storage;
+    public ConcurrentHashMap<Byte, SocketWrapper> getClients() {
+        return clients;
     }
 }

@@ -77,6 +77,10 @@ public class StoreClientTCP implements Runnable {
         }
     }
 
+    public ArrayBlockingQueue<byte[]> getResponses() {
+        return responses;
+    }
+
     private void stop() {
         stopped = true;
     }
