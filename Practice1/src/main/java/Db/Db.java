@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface Db {
 
-    int insert(Product product);
+    Product insert(Product product);
 
     Product update(Product product);
 

@@ -88,6 +88,8 @@ public class ProcessorDb implements Processor, Runnable {
                 case "price_from" -> pb.priceFrom(Double.parseDouble(colVal[1]));
                 case "price_to" -> pb.priceTo(Double.parseDouble(colVal[1]));
                 case "category" -> pb.category(colVal[1]);
+                case "page_number" -> pb.pageNumber(Integer.parseInt(colVal[1]));
+                case "page_size" -> pb.pageSize(Integer.parseInt(colVal[1]));
             }
         }
 

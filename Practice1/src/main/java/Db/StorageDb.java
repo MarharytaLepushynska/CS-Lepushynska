@@ -23,7 +23,7 @@ public class StorageDb implements Db {
     }
 
     @Override
-    public int insert(Product product) {
+    public Product insert(Product product) {
         try(PreparedStatement ps = connection.prepareStatement("INSERT INTO Storage(product_name, product_amount, product_price, category) values (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, product.getName());
             ps.setDouble(2, product.getAmount());
@@ -37,9 +37,9 @@ public class StorageDb implements Db {
 
             ResultSet rs = ps.getGeneratedKeys();
             if(rs.next()) {
-                return rs.getInt(1);
+                return new Product(rs.getInt(1), product.getName(), product.getAmount(), product.getPrice(), product.getCategory());
             }
-            throw new RuntimeException("Insert failed");
+            return null;
         } catch (SQLException e) {
             throw new RuntimeException("Can't insert product: " + product, e);
         }
@@ -121,6 +121,13 @@ public class StorageDb implements Db {
 
         if(!filterPart.isEmpty()) {
             sql.append(" WHERE ").append(filterPart);
+        }
+
+        if(filter.getPageSize() != null && filter.getPageNumber() != null) {
+            sql.append(" LIMIT ").append(filter.getPageSize());
+            sql.append(" OFFSET ").append((filter.getPageNumber() - 1) * filter.getPageSize());
+        } else if(filter.getPageSize() != null) {
+            sql.append(" LIMIT ").append(filter.getPageSize());
         }
 
         try(PreparedStatement ps = connection.prepareStatement(sql.toString())) {

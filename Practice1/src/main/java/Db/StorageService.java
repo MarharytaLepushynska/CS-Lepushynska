@@ -23,9 +23,9 @@ public class StorageService{
     }
 
     public String create(Product product){
-        int create = storageDb.insert(product);
-        if(create > 0) {
-            return "Product created with id: " + create;
+        Product created = storageDb.insert(product);
+        if(created != null) {
+            return "Product created with id: " + created;
         } else {
             return "Product not created";
         }

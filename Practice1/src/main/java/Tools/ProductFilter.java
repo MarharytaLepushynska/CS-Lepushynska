@@ -15,4 +15,7 @@ public class ProductFilter {
     private Double priceTo;
 
     private String category;
+
+    private Integer pageNumber;
+    private Integer pageSize;
 }
