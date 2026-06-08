@@ -7,6 +7,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,12 +15,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class StoreClientUDP implements Runnable {
     private final ArrayBlockingQueue<String> inQueue;
     private final ArrayBlockingQueue<Long> repQueue = new ArrayBlockingQueue<>(50);
-    private final AtomicInteger pktId = new AtomicInteger(0);
+    private final ArrayBlockingQueue<byte[]> responses = new ArrayBlockingQueue<>(50);
+    private static byte count = 0;
+    private final byte cId;
+    private AtomicInteger pktId = new AtomicInteger(0);
     private static final int serverPort = 8081;
     private volatile boolean stopped = false;
 
     public StoreClientUDP(ArrayBlockingQueue<String> inQueue) {
         this.inQueue = inQueue;
+        cId = count++;
     }
 
     @Override
@@ -55,12 +60,17 @@ public class StoreClientUDP implements Runnable {
     private void waitAck(DatagramSocket socket) {
         while(!stopped) {
             try {
-                byte[] buf = new byte[10];
+                byte[] buf = new byte[1024];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
 
-                long receiveId = ByteBuffer.wrap(buf, 2, 8).getLong();
-                repQueue.put(receiveId);
+                byte[] data = Arrays.copyOf(buf, packet.getLength());
+                if (packet.getLength() == 10) {
+                    long receiveId = ByteBuffer.wrap(buf, 2, 8).getLong();
+                    repQueue.put(receiveId);
+                } else {
+                    responses.put(data);
+                }
             } catch (Exception e) {
                 Thread.currentThread().interrupt();
             }
@@ -71,7 +81,7 @@ public class StoreClientUDP implements Runnable {
         String[] parts = in.split(" ");
         int cType = Integer.parseInt(parts[0]);
         String message = in.substring(in.indexOf(" ") + 1);
-        Message msg = new Message((byte) 0x10,
+        Message msg = new Message(cId,
                 pktId.incrementAndGet(),
                 cType,
                 4,
@@ -82,5 +92,13 @@ public class StoreClientUDP implements Runnable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void stop() {
+        stopped = true;
+    }
+
+    public ArrayBlockingQueue<byte[]> getResponses() {
+        return responses;
     }
 }

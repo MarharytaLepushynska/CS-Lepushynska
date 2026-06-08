@@ -28,7 +28,7 @@ public class SenderUDP implements Sender {
         try {
             byte bSrc = msg[1];
             InfoClient client = clients.get(bSrc);
-            if (client == null) {
+            if (client != null) {
                 DatagramPacket packet = new DatagramPacket(msg, msg.length, client.getAddress(), client.getPort());
                 socket.send(packet);
             }
@@ -51,6 +51,6 @@ public class SenderUDP implements Sender {
 
     @Override
     public void stop() {
-
+        stopped = true;
     }
 }

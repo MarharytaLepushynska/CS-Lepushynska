@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ServerTCPTest {
-    private static StorageService service = new StorageService();
+    private StorageService service = new StorageService();
     private StorageDb db = new StorageDb("jdbc:mysql://localhost:3306/store_db", "root", "root");
     private Decoder decoder = new Decoder();
     private ServerTCP server;
@@ -36,7 +36,7 @@ class ServerTCPTest {
         queue.put("2 рис 5 70 крупи");
         queue2.put("2 сочевиця 40 50 крупи");
 
-        Thread.sleep(4000);
+        Thread.sleep(1000);
         assertEquals(5, service.getAmountByName("рис"));
 
         int id1 = service.getIdByName("рис");
@@ -66,7 +66,7 @@ class ServerTCPTest {
 
         queue.put("1 " + id);
 
-        Thread.sleep(4000);
+        Thread.sleep(1000);
 
         byte[] res = client.getResponses().take();
         try {
@@ -90,7 +90,7 @@ class ServerTCPTest {
 
         queue.put("3 id=" + id + " name=булгур category=крупи");
 
-        Thread.sleep(4000);
+        Thread.sleep(1000);
 
         byte[] res = client.getResponses().take();
         try {
@@ -116,7 +116,7 @@ class ServerTCPTest {
         queue.put("1 " + id);
 
 
-        Thread.sleep(4000);
+        Thread.sleep(1000);
 
         client.getResponses().poll();
         byte[] res = client.getResponses().take();
@@ -139,7 +139,7 @@ class ServerTCPTest {
         queue.put("5");
         queue.put("6");
 
-        Thread.sleep(4000);
+        Thread.sleep(1000);
 
         client.getResponses().take();
         byte[] res = client.getResponses().take();
@@ -161,7 +161,7 @@ class ServerTCPTest {
 
         queue.put("6 price_from=12 price_to=30 category=солодке");
 
-        Thread.sleep(4000);
+        Thread.sleep(1000);
 
         byte[] res = client.getResponses().take();
         try {
@@ -184,7 +184,7 @@ class ServerTCPTest {
         queue.put("6 page_number=2 page_size=3");
 
 
-        Thread.sleep(4000);
+        Thread.sleep(1000);
 
         byte[] res = client.getResponses().take();
         try {
@@ -215,7 +215,7 @@ class ServerTCPTest {
         queue.put("2 макарони 100 50 крупи");
         queue.put("3 id=" + id + " name=мак price=10 category=крупи");
 
-        Thread.sleep(4000);
+        Thread.sleep(1000);
 
         Product p1 = db.getById(id);
         assertEquals("мак", p1.getName());
@@ -242,8 +242,8 @@ class ServerTCPTest {
         server.stop();
     }
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+    void setUp() {
         ArrayList<Product> products = new ArrayList<>();
         products.add(new Product("монстр", 10, 24.5, "напої"));
         products.add(new Product("баклажан", 20, 4.5, "овочі"));
@@ -258,8 +258,8 @@ class ServerTCPTest {
         }
     }
 
-    @AfterAll
-    static void cleanUp() {
+    @AfterEach
+    void cleanUp() {
         service.deleteAll();
     }
 }

@@ -8,6 +8,7 @@ public class StoreServerUDP implements Runnable {
     private final ArrayBlockingQueue<DatagramPacket> packets;
     private volatile boolean stopped = false;
     private static final int port = 8081;
+    private DatagramSocket socket;
 
     public StoreServerUDP(ArrayBlockingQueue<DatagramPacket> packets) {
         this.packets = packets;
@@ -16,7 +17,9 @@ public class StoreServerUDP implements Runnable {
 
     @Override
     public void run() {
-        try(DatagramSocket socket = new DatagramSocket(port)) {
+        try {
+            socket = new DatagramSocket(port);
+
             while (!stopped) {
                 byte[] buf = new byte[1024];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
@@ -24,11 +27,17 @@ public class StoreServerUDP implements Runnable {
                 packets.put(packet);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            if (!stopped) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     public void stop() {
         stopped = true;
+
+        if(socket != null && !socket.isClosed()) {
+            socket.close();
+        }
     }
 }
